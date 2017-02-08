@@ -7,8 +7,13 @@
 #ifndef LTC2440_h
 #define LTC2440_h
 /*************************************************************************
-	      Modes of operation detailed in the datasheet
+	    Modes of operation and speeds detailed in the datasheet p14
 **************************************************************************/
+#define LTC_SPI_MODE	0 
+#define LTC_2WIRE_MODE  1
+#define LTC_SINGLE      2
+#define LTC_STREAM_MODE 3
+
 #define LTC_HIGH_SPEED     1  //23µVRMS,  17ENOB,   OSR64
 #define LTC_SPEED_7        2  //3.5µVRMS, 20ENOB,   OSR128
 #define LTC_SDI_LOW        0  //2µVRMS,   21.3ENOB, OSR256, allow tying SDI LOW
@@ -20,6 +25,7 @@
 #define LTC_SPEED_1        8  //375nVRMS, 24ENOB,   OSR8192
 #define LTC_HIGH_RES1      7  //250nVRMS, 24.4ENOB, OSR16384
 #define LTC_HIGH_RES2      15 //200nVRMS, 24.6ENOB, OSR32768, allow tying SDI HIGH
+
 const uint8_t *ltcAdcModes[] = {
 	LTC_HIGH_SPEED,  
 	LTC_SPEED_7,      
@@ -39,7 +45,7 @@ class LTCadc
 {
 	public:
 		LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, char clockPort = NULL, byte clockPin = NULL);
-		void setMode(string mode);   //'single' (default) or 'stream'
+		void setMode(string mode);   //'spiMode' (default) with external clock and single conversion), 'twoWire', 'stream', 'singleInternal'
 		void setClock(string clock); //'ext' (default) or 'int', only if clockPort and clockPin are defined
 		void setConfig(byte config);   
 		uint32_t adcRead();     //--> full resolution reading without SUB LSBs
