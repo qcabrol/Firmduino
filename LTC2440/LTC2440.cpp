@@ -199,7 +199,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 		}
 	_ssPin = pin;
 	_mode  = 'single';
-	_config = LTC_SPEED_5 ;
+	_speed = LTC_SPEED_5 ;
 }
 
 //1 assembler cycle = nop
@@ -213,14 +213,20 @@ two modes are possible for the LTC2440 - LTC2410 : streaming and single
 'single' outputs 32bits of data on Chip Selection
 'stream' outputs data continuously with a busyPin LOW trigger at each EOC
 ****************************************************************************/
-void LTCadc::setMode(string mode)
-{
+void LTCadc::setMode(byte mode)
+{	 
   switch(mode){
-  case('single');
-	_mode='single';
+  case(LTC_SPI_MODE);
+	_mode=LTC_SPI_MODE;
 	break;
-  case('stream');
-	_mode='stream';
+  case(LTC_2WIRE_MODE);
+	_mode=LTC_2WIRE_MODE;
+	break;
+  case(LTC_SINGLE_MODE);
+	_mode=LTC_SINGLE_MODE;
+	break;
+  case(LTC_STREAM_MODE);
+	_mode=LTC_STREAM_MODE;
 	break;
   default:
 	_mode='single';
@@ -232,14 +238,14 @@ void LTCadc::setMode(string mode)
 set the clock mode if defined as a possible mode
 two modes are possible for the LTC2440 - LTC2410 : internal or external clock
 ****************************************************************************/
-void LTCadc::setClock(string clock)
+void LTCadc::setClock(bool clock)
 {
 	if(ltcClockPort!=NULL && _clockPin!=NULL){
-	  switch(mode){
-		  case('ext');
+	  switch(clock){
+		  case(LTC_EXT_CLK);
 			*ltcClockPort &=~(_BV(_clockPin));
 			break;
-		  case('int');
+		  case(LTC_INT_CLK);
 			*ltcClockPort |= _BV(_clockPin);
 			break;
 		  default:
@@ -250,16 +256,16 @@ void LTCadc::setClock(string clock)
 }
 
 /****************************************************************************
-set the operation config private variable if defined as a possible config
-several configs are possible for the LTC2440 - LTC2410 : 
+set the operation speed private variable if defined as a possible speed
+several speeds are possible for the LTC2440 - LTC2410 : 
 *****************************************************************************/
-void LTCadc::setConfig(byte config)
+void LTCadc::setConfig(byte speed)
 {
-  bool configExists=false;
+  bool speedExists=false;
   for(byte i=0; i<NUM_LTC_MODES; i++){
-	if(ltcModesArray[i] == config){_config=config; configExists= true;}
+	if(ltcAdcModes[i] == speed){_speed=speed; speedExists= true;}
   }
-  if(!configExists) _config= LTC_SPEED_5 ;
+  if(!speedExists) _speed= LTC_SPEED_5 ;
 }
 
 /****************************************************************************

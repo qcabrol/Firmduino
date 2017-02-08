@@ -9,6 +9,9 @@
 /*************************************************************************
 	    Modes of operation and speeds detailed in the datasheet p14
 **************************************************************************/
+#define LTC_EXT_CLK  0
+#define LTC_INT_CLK  1
+
 #define LTC_SPI_MODE	0 
 #define LTC_2WIRE_MODE  1
 #define LTC_SINGLE      2
@@ -45,9 +48,9 @@ class LTCadc
 {
 	public:
 		LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, char clockPort = NULL, byte clockPin = NULL);
-		void setMode(string mode);   //'spiMode' (default) with external clock and single conversion), 'twoWire', 'stream', 'singleInternal'
 		void setClock(string clock); //'ext' (default) or 'int', only if clockPort and clockPin are defined
-		void setConfig(byte config);   
+		void setMode(byte mode);     //one of the 4 modes defined above
+		void setSpeed(byte speed);   
 		uint32_t adcRead();     //--> full resolution reading without SUB LSBs
 		uint16_t adcRead16();   //--> truncation of 8LSbits
 		uint16_t adcReadLSBs(); //--> only 16Least significant
@@ -61,7 +64,7 @@ class LTCadc
 		byte	 _busyPin;
 		byte     _ssPin;
 		byte     _mode;
-		byte     _config;
+		byte     _speed;
 		inline void volatile nop(void);
 };
 #endif
