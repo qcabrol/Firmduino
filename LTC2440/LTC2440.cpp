@@ -197,7 +197,6 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 			}	
 			_clockPin=clockPin;
 		}
-
 	_ssPin = pin;
 	_mode  = 'single';
 	_config = LTC_DEFAULT_MODE;
@@ -244,16 +243,15 @@ void LTCadc::setClock(string clock)
 			*ltcClockPort |= _BV(_clockPin);
 			break;
 		  default:
-			*ltcClockPort |= _BV(_clockPin);
+			*ltcClockPort &=~(_BV(_clockPin));
 			break;
 		}
   }
 }
 
-
 /****************************************************************************
 set the operation config private variable if defined as a possible config
-several configs are possible for the LTC2440 - LTC2410 : streaming and single
+several configs are possible for the LTC2440 - LTC2410 : 
 *****************************************************************************/
 void LTCadc::setConfig(byte config)
 {
