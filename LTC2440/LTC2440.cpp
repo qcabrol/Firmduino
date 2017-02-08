@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "LTC2440.h"
 #include "SPI.h"
+#include "pins_arduino.h"
 //takes as parameters the port letter as a string (eg. 'A') 
 //and pin number of the chip select pin
 //the busy pin MUST BE on an interruptible pin of the AVR MCU
@@ -204,7 +205,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 
 //1 assembler cycle = nop
 inline void volatile LTCadc::nop(void) { asm __volatile__ ("nop"); }
-void LTCadc::adcSelect()    { SPI.setBitOrder(MSBFIRST); nop(); *ltcPort &=~(_BV(_ssPin)); nop(); }
+void LTCadc::adcSelect()    { SPI.setBitOrder(MSBFIRST); *ltcPort &=~(_BV(_ssPin)); nop(); }
 void LTCadc::adcDeselect()  { nop(); *ltcPort |= _BV(_ssPin); nop(); }
 
 /***************************************************************************
@@ -288,8 +289,26 @@ void LTCadc::setSpeed(byte speed)
 
 *****************************************************************************/
 uint32_t LTCadc::adcRead() {
+	uint32_t result = 0;
 	switch(_mode){
 		case(LTC_SPI_MODE);
+		bool isReady= waitUntilFinish();
+		if(isReady){	
+			// MSB
+			result = SPI.transfer(_mode << 3);
+			result = result << 8;
+
+			result = result + SPI.transfer(0);
+			result = result << 8;
+
+			result |= result + SPI.transfer(0);
+			result = result << 8;
+			//LSBs
+			result |= result +SPI.transfer(0);
+			result = result << 8;
+			return result;
+		}
+		else return LTC_ADC_ERROR;
 		break;
 	  case(LTC_2WIRE_MODE);
 		break;
@@ -301,19 +320,21 @@ uint32_t LTCadc::adcRead() {
 		break;
 	}
 
-	uint32_t result = 0;
-	// MSB
-	result = SPI.transfer(_mode);
-	result = result << 8;
-    //Central Byte
-	result = result + SPI.transfer(0);
-	result = result << 8;
-    //LSB
-	result |= result + SPI.transfer(0);
-	result = result << 8;
-	//SUB LSBs, not relevant
-	SPI.transfer(0);
-	return result;
+
+}
+
+/****************************************************************************
+		     Test for end of conversion by polling CS LOW
+*****************************************************************************/
+bool LTCadc::waitUntilFinish(){
+	bool isReady=false;
+	for(int i=0; i<1000;i++){
+		adcSelect();
+		isReady= ~digitalRead(MISO);
+		if(isReady) return true;
+		adcDeselect();
+	}
+	return false;
 }
 
 /****************************************************************************

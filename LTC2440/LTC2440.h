@@ -9,12 +9,14 @@
 /*************************************************************************
 	    Modes of operation and speeds detailed in the datasheet p14
 **************************************************************************/
+#define LTC_ADC_ERROR uint32_t 0xFFFF
+
 #define LTC_EXT_CLK  0
 #define LTC_INT_CLK  1
 
 #define LTC_SPI_MODE	0 
 #define LTC_2WIRE_MODE  1
-#define LTC_SINGLE      2
+#define LTC_SINGLE_MODE 2
 #define LTC_STREAM_MODE 3
 
 #define LTC_HIGH_SPEED     1  //23µVRMS,  17ENOB,   OSR64
@@ -48,8 +50,8 @@ class LTCadc
 {
 	public:
 		LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, char clockPort = NULL, byte clockPin = NULL);
-		void setClock(string clock); //'ext' (default) or 'int', only if clockPort and clockPin are defined
-		void setMode(byte mode);     //one of the 4 modes defined above
+		void setClock(bool clock); //'ext' (default) or 'int', only if clockPort and clockPin are defined
+		void setMode(byte mode);   //one of the 4 modes defined above
 		void setSpeed(byte speed);   
 		uint32_t adcRead();     //--> full resolution reading without SUB LSBs
 		uint16_t adcRead16();   //--> truncation of 8LSbits
