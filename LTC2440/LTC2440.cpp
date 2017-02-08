@@ -205,7 +205,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 //1 assembler cycle = nop
 inline void volatile LTCadc::nop(void) { asm __volatile__ ("nop"); }
 void LTCadc::adcSelect()    { SPI.setBitOrder(MSBFIRST); nop(); *ltcPort &=~(_BV(_ssPin)); nop(); }
-void LTCadc::adcDeselect()   { nop(); *ltcPort |= _BV(_ssPin); nop(); }
+void LTCadc::adcDeselect()  { nop(); *ltcPort |= _BV(_ssPin); nop(); }
 
 /***************************************************************************
 set the operation mode private variable if defined as a possible mode
@@ -217,19 +217,35 @@ void LTCadc::setMode(byte mode)
 {	 
   switch(mode){
   case(LTC_SPI_MODE);
+	 setClock(LTC_EXT_CLK);
 	_mode=LTC_SPI_MODE;
 	break;
   case(LTC_2WIRE_MODE);
+    setClock(LTC_EXT_CLK);
 	_mode=LTC_2WIRE_MODE;
 	break;
   case(LTC_SINGLE_MODE);
-	_mode=LTC_SINGLE_MODE;
+    if(ltcClockPort!=NULL && _clockPin !=NULL){
+		setClock(LTC_INT_CLK);
+		_mode=LTC_SINGLE_MODE;
+	}
+	else{
+		 setClock(LTC_EXT_CLK);
+		_mode=LTC_SPI_MODE;
+	}
 	break;
   case(LTC_STREAM_MODE);
-	_mode=LTC_STREAM_MODE;
+    if(ltcClockPort!=NULL && _clockPin !=NULL){
+		setClock(LTC_INT_CLK);
+		_mode=LTC_STREAM_MODE;
+	}
+	else{
+		 setClock(LTC_EXT_CLK);
+		_mode=LTC_SPI_MODE;
+	}
 	break;
   default:
-	_mode='single';
+	_mode=LTC_SPI_MODE;
 	break;
   }
 }
@@ -257,9 +273,9 @@ void LTCadc::setClock(bool clock)
 
 /****************************************************************************
 set the operation speed private variable if defined as a possible speed
-several speeds are possible for the LTC2440 - LTC2410 : 
+several speeds are possible for the LTC2440 - LTC2410 
 *****************************************************************************/
-void LTCadc::setConfig(byte speed)
+void LTCadc::setSpeed(byte speed)
 {
   bool speedExists=false;
   for(byte i=0; i<NUM_LTC_MODES; i++){
@@ -272,6 +288,19 @@ void LTCadc::setConfig(byte speed)
 
 *****************************************************************************/
 uint32_t LTCadc::adcRead() {
+	switch(_mode){
+		case(LTC_SPI_MODE);
+		break;
+	  case(LTC_2WIRE_MODE);
+		break;
+	  case(LTC_SINGLE_MODE);
+		break;
+	  case(LTC_STREAM_MODE);
+		break;
+	  default:
+		break;
+	}
+
 	uint32_t result = 0;
 	// MSB
 	result = SPI.transfer(_mode);
