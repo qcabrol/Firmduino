@@ -9,25 +9,29 @@
 /*************************************************************************
 	      Modes of operation detailed in the datasheet
 **************************************************************************/
-#define LTC_DEFAULT_MODE   0x80 //External Input, 50Hz and 60Hz Rejection, Autocalibration
-#define LTC_NO60_MODE      0x82 //External Input, 50Hz Rejection, Autocalibration
-#define LTC_NO50_MODE      0x84 //External Input, 60Hz Rejection, Autocalibration
-#define LTC_2X_MODE        0x81 //External Input, 50Hz and 60Hz Rejection, 2x Speed
-#define LTC_2X_NO60_MODE   0x83 //External Input, 50Hz Rejection, 2x Speed
-#define LTC_2X_NO50_MODE   0x85 //External Input, 60Hz Rejection, 2x Speed
-#define LTC_TEMP_MODE      0x88 //Temperature Input, 50Hz and 60Hz Rejection, Autocalibration
-#define LTC_TEMP_NO60_MODE 0x8A //Temperature Input, 50Hz Rejection, Autocalibration
-#define LTC_TEMP_NO50_MODE 0x8C //Temperature Input, 60Hz Rejection, Autocalibration
+#define LTC_HIGH_SPEED     1  //23µVRMS,  17ENOB,   OSR64
+#define LTC_SPEED_7        2  //3.5µVRMS, 20ENOB,   OSR128
+#define LTC_SDI_LOW        0  //2µVRMS,   21.3ENOB, OSR256, allow tying SDI LOW
+#define LTC_SPEED_6        3  //2µVRMS,   21.3ENOB, OSR256
+#define LTC_SPEED_5        4  //1.4µVRMS, 21.8ENOB, OSR512,
+#define LTC_SPEED_4        5  //1µVRMS,   22.4ENOB, OSR1024
+#define LTC_SPEED_3        6  //750nVRMS, 22.9ENOB, OSR2048
+#define LTC_SPEED_2        7  //510nVRMS, 23.4ENOB, OSR4096
+#define LTC_SPEED_1        8  //375nVRMS, 24ENOB,   OSR8192
+#define LTC_HIGH_RES1      7  //250nVRMS, 24.4ENOB, OSR16384
+#define LTC_HIGH_RES2      15 //200nVRMS, 24.6ENOB, OSR32768, allow tying SDI HIGH
 const uint8_t *ltcAdcModes[] = {
-	LTC_DEFAULT_MODE,
-	LTC_NO60_MODE, 
-	LTC_NO50_MODE, 
-	LTC_2X_MODE, 
-	LTC_2X_NO60_MODE, 
-	LTC_2X_NO50_MODE, 
-	LTC_TEMP_MODE, 
-	LTC_TEMP_NO60_MODE, 
-	LTC_TEMP_NO50_MODE 
+	LTC_HIGH_SPEED,  
+	LTC_SPEED_7,      
+	LTC_SDI_LOW,      
+	LTC_SPEED_6,      
+	LTC_SPEED_5,      
+	LTC_SPEED_4,  
+	LTC_SPEED_3,      
+	LTC_SPEED_2,      
+	LTC_SPEED_1,        
+	LTC_HIGH_RES1,     
+	LTC_HIGH_RES2,      
 };
 #define NUM_LTC_MODES sizeof(ltcAdcModes) / sizeof(ltcAdcModes[0]);
 
@@ -36,7 +40,7 @@ class LTCadc
 	public:
 		LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, char clockPort = NULL, byte clockPin = NULL);
 		void setMode(string mode);   //'single' (default) or 'stream'
-		void setClock(string clock); //'ext' (default) or 'ext', only if clockPort and clockPin are defined
+		void setClock(string clock); //'ext' (default) or 'int', only if clockPort and clockPin are defined
 		void setConfig(byte config);   
 		uint32_t adcRead();     //--> full resolution reading without SUB LSBs
 		uint16_t adcRead16();   //--> truncation of 8LSbits

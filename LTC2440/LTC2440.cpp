@@ -199,7 +199,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 		}
 	_ssPin = pin;
 	_mode  = 'single';
-	_config = LTC_DEFAULT_MODE;
+	_config = LTC_SPEED_5 ;
 }
 
 //1 assembler cycle = nop
@@ -259,7 +259,7 @@ void LTCadc::setConfig(byte config)
   for(byte i=0; i<NUM_LTC_MODES; i++){
 	if(ltcModesArray[i] == config){_config=config; configExists= true;}
   }
-  if(!configExists) _config=LTC_DEFAULT_MODE;
+  if(!configExists) _config= LTC_SPEED_5 ;
 }
 
 /****************************************************************************
