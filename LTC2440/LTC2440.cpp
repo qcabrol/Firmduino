@@ -198,7 +198,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 			_clockPin=clockPin;
 		}
 	_ssPin = pin;
-	_mode  = 'single';
+	_mode  = LTC_SPI_MODE;
 	_speed = LTC_SPEED_5 ;
 }
 
