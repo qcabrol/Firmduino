@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "LTC2440.h"
 #include "SPI.h"
-#include "pins_arduino.h"
 //takes as parameters the port letter as a string (eg. 'A') 
 //and pin number of the chip select pin
 //the busy pin MUST BE on an interruptible pin of the AVR MCU
@@ -69,6 +68,7 @@ LTCadc::LTCadc(char port, byte pin, char busyPort = NULL , byte busyPin = NULL, 
 			ltcPort= NULL;
 			break; 
 	}
+	
 	if(busyPort!=NULL){
 		switch (busyPort) {
 	
@@ -311,10 +311,13 @@ uint32_t LTCadc::adcRead() {
 		else return LTC_ADC_ERROR;
 		break;
 	  case(LTC_2WIRE_MODE);
+		//To be implemented
 		break;
 	  case(LTC_SINGLE_MODE);
+	    //To be implemented
 		break;
 	  case(LTC_STREAM_MODE);
+	    //To be implemented
 		break;
 	  default:
 		break;

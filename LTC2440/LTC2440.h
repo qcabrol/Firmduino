@@ -31,7 +31,7 @@
 #define LTC_HIGH_RES1      7  //250nVRMS, 24.4ENOB, OSR16384
 #define LTC_HIGH_RES2      15 //200nVRMS, 24.6ENOB, OSR32768, allow tying SDI HIGH
 
-const uint8_t *ltcAdcModes[] = {
+const uint8_t *ltcAdcSpeedss[] = {
 	LTC_HIGH_SPEED,  
 	LTC_SPEED_7,      
 	LTC_SDI_LOW,      
@@ -67,6 +67,7 @@ class LTCadc
 		byte     _ssPin;
 		byte     _mode;
 		byte     _speed;
+		bool     waitUntilFinish();
 		inline void volatile nop(void);
 };
 #endif
