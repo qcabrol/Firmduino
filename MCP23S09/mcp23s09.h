@@ -54,10 +54,8 @@ mcp23s09		Microchip		  8			SPI					INT/OPEN DRAIN
 #define _MCP23S09_H_
 
 #include <inttypes.h>
-
+#include <SPI.h>//this chip needs SPI
 #include "gpio_expander.h"
-#include <../SPI/SPI.h>//this chip needs SPI
-
 #include "_utility/SPI.parameters.h"
 
 class mcp23s09 : public gpio_expander
@@ -107,7 +105,6 @@ public:
 private:
     uint8_t 		_cs;	
 	uint32_t		_spiTransactionsSpeed;//for SPI transactions
-	
 	uint8_t 		_readCmd;
 	uint8_t 		_writeCmd;
 	void 			startSend(bool mode);

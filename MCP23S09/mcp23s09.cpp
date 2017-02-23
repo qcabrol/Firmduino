@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <Arduino.h>
-
 #include "mcp23s09.h"
-#include "SPI/SPI.h"
+
 
 /****************************************************************************
 	   default initialization of the class with no arguments
@@ -108,7 +107,7 @@ void mcp23s09::begin(bool protocolInitOverride) {
 	digitalWrite(_cs, HIGH);
 	delay(100);
 	_gpioDirection = 0xFF;//all in
-	_gpioState = 0x00; ,  //all low 
+	_gpioState = 0x00;   //all low 
 }
 
 /****************************************************************************
@@ -207,7 +206,7 @@ void mcp23s09::portPullup(uint8_t data) {
 /****************************************************************************
 		Upload status to port 
 *****************************************************************************/
-void mcp23s09::gpioPortUpdate(){
+void mcp23s09::portUpdate(){
 	writeByte(GPIO,_gpioState);
 }
 
