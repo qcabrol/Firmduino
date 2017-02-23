@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "mcp23s09.h"
-#include <../SPI/SPI.h>//this chip needs SPI
+#include "SPI/SPI.h"
 
 mcp23s09::mcp23s09(){
 #if defined (SPI_HAS_TRANSACTION)
@@ -22,7 +22,7 @@ void mcp23s09::setSPIspeed(uint32_t spispeed){
 			_spiTransactionsSpeed = spispeed;
 		}
 	} else {
-		_spiTransactionsSpeed = 0;//disable SPItransactons
+		_spiTransactionsSpeed = 0;//disable SPItransactions
 	}
 	#else
 	_spiTransactionsSpeed = 0;
