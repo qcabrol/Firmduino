@@ -1,5 +1,5 @@
 /*********************************************************************************
-	LTC2440.h - Library for controlling the GPIO MCP23S09
+	MCP23S09.h - Library for controlling the GPIO MCP23S09
 	on ATMEL AVR Mcus
 	Adapted by Quentin Cabrol, February 23, 2017
 	From Sumoboy Repo https://github.com/sumotoy/gpio_expander
@@ -42,10 +42,10 @@ mcp23s09		Microchip		  8			SPI					INT/OPEN DRAIN
 				__ __
 		+++   [|  U  |] GND
 		NC    [|     |] NC
-	->  cs    [|     |] IO-7
-	->  sck   [|     |] IO-6
-	->  mosi  [|     |] IO-5
-	<-  miso  [|     |] IO-4
+	 ->  cs   [|     |] IO-7
+	 ->  sck  [|     |] IO-6
+	 ->  mosi [|     |] IO-5
+	 <-  miso [|     |] IO-4
 		rst   [|     |] IO-3
 		int   [|     |] IO-2
 		IO-0  [|_____|] IO-1
@@ -70,23 +70,24 @@ public:
 	void			postSetup(const uint8_t csPin,uint32_t spispeed=0);//used with other libraries only
 	virtual void 	begin(bool protocolInitOverride=false); //protocolInitOverride=true	will not init the SPI	
 
+	void 			portMode(uint8_t mode);					//set all pins to INPUT or OUTPUT
+	void 			portWrite(uint8_t value);				//write data to all pins
+	uint8_t 		portRead();								//read the state of the pins (all)
+	uint8_t 		portReadFast();							
 	
-	void 			gpioPinMode(uint8_t mode);					//set all pins to INPUT or OUTPUT
-	void 			gpioPinMode(uint8_t pin, bool mode);		//set a unique pin as IN(1) or OUT (0)
-	void 			gpioPort(uint8_t value);					//write data to all pins
-	uint8_t 		readGpioPort();								//read the state of the pins (all)
-	uint8_t 		readGpioPortFast();							
+	void 			pinMode(uint8_t pin, bool mode);		//set a unique pin as IN(1) or OUT (0)	
+	void 			pinWrite(uint8_t pin, bool value);  //write data to one pin
+	int 			pinRead(uint8_t pin);				//read data from one pin
+	int 			pinReadFast(uint8_t pin);
 	
-	void 			gpioDigitalWrite(uint8_t pin, bool value);  //write data to one pin
-	void			gpioDigitalWriteFast(uint8_t pin, bool value);
-	int 			gpioDigitalRead(uint8_t pin);				//read data from one pin
-	uint8_t		 	gpioRegisterReadByte(byte reg);					//read a byte from chip register
-	int 			gpioDigitalReadFast(uint8_t pin);
-	void 			gpioRegisterWriteByte(byte reg,byte data);		//write a chip register
-	void			portPullup(uint8_t data);						// true=pullup, false=pulldown all pins
-	void			gpioPortUpdate();
+	uint8_t		 	regRead(byte reg);				    //read a byte from chip register
+	void 			regWrite(byte reg,byte data);		//write a chip register
+	
+	void			portPullup(uint8_t data);			// true=pullup, false=pulldown all pins
+	void			portUpdate();
+	
 	// direct access commands
-	uint8_t 		readAddress(byte addr);
+	uint8_t 		readAddr(byte addr);
 	int 			getInterruptNumber(byte pin);
 	void			setSPIspeed(uint32_t spispeed);//for SPI transactions
 	
@@ -104,12 +105,9 @@ public:
 	byte			INTCON;
 	
 private:
-    uint8_t 		_cs;
-	uint8_t 		_adrs;
-	
+    uint8_t 		_cs;	
 	uint32_t		_spiTransactionsSpeed;//for SPI transactions
 	
-	uint8_t 		_useHaen;
 	uint8_t 		_readCmd;
 	uint8_t 		_writeCmd;
 	void 			startSend(bool mode);
