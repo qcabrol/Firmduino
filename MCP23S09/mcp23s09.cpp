@@ -69,8 +69,8 @@ void mcp23s09::postSetup(const uint8_t csPin,uint32_t spispeed){
 		if (spispeed > 0) setSPIspeed(spispeed);
 	#endif
 	_cs = csPin;
-	_readCmd =  1;
-	_writeCmd = 0;
+	_readCmd =  0x41;
+	_writeCmd = 0x40;
 	//setup register values for this chip
 	IOCON = 	0x05;
 	IODIR = 	0x00;
